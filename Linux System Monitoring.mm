@@ -77,5 +77,9 @@
 </hook>
 <hook NAME="accessories/plugins/AutomaticLayout.properties" VALUE="ALL"/>
 <font BOLD="true"/>
+<node TEXT="Require env where pcp is available" POSITION="right" ID="ID_1258114593" CREATED="1705661857250" MODIFIED="1705661869517"/>
+<node TEXT="Configure pcp" POSITION="right" ID="ID_437397818" CREATED="1705661869946" MODIFIED="1705661874639"/>
+<node TEXT="Maybe configure with Grafana" POSITION="right" ID="ID_212149912" CREATED="1705661875089" MODIFIED="1705661884884"/>
+<node TEXT="Collect data in CSV format and send to vispeahen" POSITION="right" ID="ID_1206489466" CREATED="1705661885217" MODIFIED="1705661918857"/>
 </node>
 </map>
