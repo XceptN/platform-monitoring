@@ -1,7 +1,7 @@
 <map version="freeplane 1.9.13">
 <!--To view this file, download free mind mapping software Freeplane from https://www.freeplane.org -->
-<node TEXT="Linux System Monitoring" LOCALIZED_STYLE_REF="AutomaticLayout.level.root" FOLDED="false" ID="ID_1090958577" CREATED="1409300609620" MODIFIED="1705661688741"><hook NAME="MapStyle" background="#2e3440">
-    <properties show_icon_for_attributes="true" edgeColorConfiguration="#808080ff,#ff0000ff,#0000ffff,#00ff00ff,#ff00ffff,#00ffffff,#7c0000ff,#00007cff,#007c00ff,#7c007cff,#007c7cff,#7c7c00ff" show_note_icons="true" fit_to_viewport="false" associatedTemplateLocation="template:/dark_nord_template.mm" followedTemplateLocation="template:/dark_nord_template.mm" followedMapLastTime="1667767402000"/>
+<node TEXT="Linux System Monitoring" LOCALIZED_STYLE_REF="AutomaticLayout.level.root" FOLDED="false" ID="ID_1090958577" CREATED="1409300609620" MODIFIED="1706689169030" LINK="https://github.com/XceptN/work-track/issues/4"><hook NAME="MapStyle" background="#2e3440">
+    <properties show_icon_for_attributes="true" edgeColorConfiguration="#808080ff,#ff0000ff,#0000ffff,#00ff00ff,#ff00ffff,#00ffffff,#7c0000ff,#00007cff,#007c00ff,#7c007cff,#007c7cff,#7c7c00ff" show_note_icons="true" associatedTemplateLocation="template:/dark_nord_template.mm" followedTemplateLocation="template:/dark_nord_template.mm" followedMapLastTime="1667767402000" fit_to_viewport="false"/>
 
 <map_styles>
 <stylenode LOCALIZED_TEXT="styles.root_node" STYLE="oval" UNIFORM_SHAPE="true" VGAP_QUANTITY="24 pt">
@@ -81,5 +81,11 @@
 <node TEXT="Configure pcp" POSITION="right" ID="ID_437397818" CREATED="1705661869946" MODIFIED="1705661874639"/>
 <node TEXT="Maybe configure with Grafana" POSITION="right" ID="ID_212149912" CREATED="1705661875089" MODIFIED="1705661884884"/>
 <node TEXT="Collect data in CSV format and send to vispeahen" POSITION="right" ID="ID_1206489466" CREATED="1705661885217" MODIFIED="1705661918857"/>
+<node TEXT="https://github.com/XceptN/work-track/issues/4" POSITION="left" ID="ID_1552310232" CREATED="1706088042188" MODIFIED="1706689166670" LINK="https://github.com/XceptN/work-track/issues/4"/>
+<node TEXT="PCP availability on various distros" POSITION="left" ID="ID_255219827" CREATED="1706690522622" MODIFIED="1706690532680">
+<node TEXT="All RHEL compatible ones" ID="ID_284427916" CREATED="1706690534631" MODIFIED="1706690541410"/>
+<node TEXT="Ubuntu" ID="ID_311863314" CREATED="1706690541829" MODIFIED="1706690546130"/>
+<node TEXT="Debian" ID="ID_1230709484" CREATED="1706690882760" MODIFIED="1706690885110"/>
+</node>
 </node>
 </map>
