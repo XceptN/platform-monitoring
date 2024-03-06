@@ -93,45 +93,170 @@
 <node TEXT="kernel.cpu.util.sys" ID="ID_510725285" CREATED="1706691211041" MODIFIED="1706691218190"/>
 <node TEXT="kernel.cpu.util.wait" ID="ID_1871221202" CREATED="1706691211043" MODIFIED="1706691220350"/>
 <node TEXT="kernel.cpu.util.idle" ID="ID_47052643" CREATED="1706691211044" MODIFIED="1706691222615"/>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; kernel.cpu.util.user kernel.cpu.util.sys kernel.cpu.util.wait kernel.cpu.util.idle" ID="ID_1432107161" CREATED="1709624018634" MODIFIED="1709645546301"/>
+<node TEXT="Multiprocessor distribution" ID="ID_350118055" CREATED="1709624124843" MODIFIED="1709624134335">
+<node TEXT="Scale of 1000" ID="ID_1464683126" CREATED="1709626832380" MODIFIED="1709626837984"/>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; kernel.percpu.cpu.idle" ID="ID_432876852" CREATED="1709626435297" MODIFIED="1709645540941"/>
+</node>
 <node TEXT="Loadavg" ID="ID_1856317363" CREATED="1706691392779" MODIFIED="1706691396310">
-<node TEXT="Compare with Core/Thread count" ID="ID_1338796" CREATED="1706691443621" MODIFIED="1706691454672"/>
+<node TEXT="Compare with Core/Thread count" ID="ID_1338796" CREATED="1706691443621" MODIFIED="1706691454672">
+<node TEXT="how to get" ID="ID_1737622785" CREATED="1709626928031" MODIFIED="1709626929183"/>
+<node TEXT="/usr/bin/nproc" ID="ID_881593683" CREATED="1709626984929" MODIFIED="1709626988264"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; kernel.all.load" ID="ID_124491159" CREATED="1709624018634" MODIFIED="1709735969826"/>
 </node>
 </node>
 <node TEXT="Memory" ID="ID_1319295949" CREATED="1706691245771" MODIFIED="1706691247471">
 <node TEXT="Virtual Memory" ID="ID_264199300" CREATED="1706691293171" MODIFIED="1706691295071">
-<node TEXT="Compare with overall RAM" ID="ID_1405297216" CREATED="1706691458437" MODIFIED="1706691462336"/>
-<node TEXT="file buffers" ID="ID_1384594908" CREATED="1706691468860" MODIFIED="1706691471696"/>
-<node TEXT="Pagetables" ID="ID_996068389" CREATED="1706691499229" MODIFIED="1706691502655"/>
-<node TEXT="cached" ID="ID_1606141735" CREATED="1706691472157" MODIFIED="1706691473795"/>
+<node TEXT="Compare with overall RAM" ID="ID_1405297216" CREATED="1706691458437" MODIFIED="1706691462336">
+<node TEXT="mem.physmem" ID="ID_1420863699" CREATED="1709636955971" MODIFIED="1709636958217"/>
+</node>
+<node TEXT="Free" ID="ID_821572356" CREATED="1709636426180" MODIFIED="1709636428004">
+<node TEXT="mem.util.free" ID="ID_122484971" CREATED="1709636428924" MODIFIED="1709636434555"/>
+<node TEXT="mem.util.available" ID="ID_61986649" CREATED="1709636587031" MODIFIED="1709636677431"/>
+</node>
+<node TEXT="Pagetables" ID="ID_996068389" CREATED="1706691499229" MODIFIED="1706691502655">
+<node TEXT="mem.util.pageTables" ID="ID_1783772661" CREATED="1709627254048" MODIFIED="1709627254048">
+<node TEXT="KB" ID="ID_1994539652" CREATED="1709636298628" MODIFIED="1709636299390"/>
+</node>
+</node>
+<node TEXT="file buffers" ID="ID_1384594908" CREATED="1706691468860" MODIFIED="1706691471696">
+<node TEXT="mem.util.bufmem" ID="ID_1310698473" CREATED="1709627290479" MODIFIED="1709627290479">
+<node TEXT="KB" ID="ID_1824328236" CREATED="1709636317118" MODIFIED="1709636317751"/>
+</node>
+</node>
+<node TEXT="cached" ID="ID_1606141735" CREATED="1706691472157" MODIFIED="1706691473795">
+<node TEXT="mem.util.cached" ID="ID_1601825" CREATED="1709627305539" MODIFIED="1709627305539">
+<node TEXT="KB" ID="ID_1523201842" CREATED="1709636324904" MODIFIED="1709636325582"/>
+</node>
+</node>
+<node TEXT="Slab" ID="ID_512181113" CREATED="1709636506231" MODIFIED="1709636507340">
+<node TEXT="mem.util.slab" ID="ID_265361037" CREATED="1709636508328" MODIFIED="1709636516333"/>
+</node>
 <node TEXT="Swap" ID="ID_74122135" CREATED="1706691465829" MODIFIED="1706691467697">
-<node TEXT="SwapTotal" ID="ID_1083895203" CREATED="1706691508129" MODIFIED="1706691511512"/>
-<node TEXT="SwapFree" ID="ID_3883742" CREATED="1706691511892" MODIFIED="1706691513937"/>
+<node TEXT="mem.util.swapTotal" ID="ID_582769451" CREATED="1709627322030" MODIFIED="1709627322030"/>
+<node TEXT="mem.util.swapFree" ID="ID_649602348" CREATED="1709627329334" MODIFIED="1709627329334"/>
 </node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; mem.physmem mem.util.free mem.util.available mem.util.pageTables mem.util.bufmem mem.util.cached mem.util.slab mem.util.swapTotal mem.util.swapFree" ID="ID_1174203050" CREATED="1709624018634" MODIFIED="1709645533289"/>
 </node>
-<node TEXT="SLAB/SLUB" ID="ID_1707196138" CREATED="1706691295368" MODIFIED="1706691307845">
+<node TEXT="SLAB/SLUB" FOLDED="true" ID="ID_1707196138" CREATED="1706691295368" MODIFIED="1706691307845">
 <node TEXT="are these really needed?" ID="ID_284496462" CREATED="1706694632525" MODIFIED="1706694637431"/>
 <node TEXT="Not really at first." ID="ID_528623894" CREATED="1706694637948" MODIFIED="1706694641146"/>
 </node>
 </node>
 <node TEXT="I/O" ID="ID_1500765514" CREATED="1706691229699" MODIFIED="1706691231108">
-<node TEXT="Free disk spaces" ID="ID_567072272" CREATED="1706691284874" MODIFIED="1706691290208"/>
-<node TEXT="I/O rates" ID="ID_525417360" CREATED="1706694702894" MODIFIED="1706694711072">
-<node TEXT="r/s" ID="ID_1558105594" CREATED="1706694746185" MODIFIED="1706694749138"/>
-<node TEXT="rKB/s" ID="ID_205948518" CREATED="1706694752991" MODIFIED="1706694755445"/>
-<node TEXT="w/s" ID="ID_285247805" CREATED="1706694764682" MODIFIED="1706694766414"/>
-<node TEXT="wKB/s" ID="ID_1548747837" CREATED="1706694779890" MODIFIED="1706694781564"/>
-<node TEXT="%util" ID="ID_917315985" CREATED="1706694782020" MODIFIED="1706694788850"/>
-<node TEXT="overall/per-disk" ID="ID_54768485" CREATED="1706694792821" MODIFIED="1706694798218"/>
+<node TEXT="Free disk spaces" ID="ID_567072272" CREATED="1706691284874" MODIFIED="1706691290208">
+<node TEXT="filesys.free" ID="ID_240900243" CREATED="1709638238810" MODIFIED="1709638241243">
+<node TEXT="KB" ID="ID_335142538" CREATED="1709638659732" MODIFIED="1709638660612"/>
 </node>
+<node TEXT="filesys.freefiles" ID="ID_1101979666" CREATED="1709638242072" MODIFIED="1709638251984">
+<node TEXT="count" ID="ID_744434573" CREATED="1709638656084" MODIFIED="1709638656875"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics  --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; filesys.free filesys.freefiles" ID="ID_1144731459" CREATED="1709638690038" MODIFIED="1709645525883"/>
+</node>
+<node TEXT="I/O rates" ID="ID_525417360" CREATED="1706694702894" MODIFIED="1706694711072">
+<node TEXT="overall" ID="ID_1181173310" CREATED="1709638028343" MODIFIED="1709638029967">
+<node TEXT="r/s" ID="ID_1558105594" CREATED="1706694746185" MODIFIED="1706694749138">
+<node TEXT="disk.all.read" ID="ID_29139963" CREATED="1709637814140" MODIFIED="1709637820669"/>
+</node>
+<node TEXT="w/s" ID="ID_285247805" CREATED="1706694764682" MODIFIED="1706694766414">
+<node TEXT="disk.all.write" ID="ID_1548609666" CREATED="1709637823480" MODIFIED="1709637826046"/>
+</node>
+<node TEXT="r b/s" ID="ID_205948518" CREATED="1706694752991" MODIFIED="1709637857303">
+<node TEXT="disk.all.read_bytes" ID="ID_831016135" CREATED="1709637895163" MODIFIED="1709637895163"/>
+</node>
+<node TEXT="w b/s" ID="ID_1548747837" CREATED="1706694779890" MODIFIED="1709637865043">
+<node TEXT="disk.all.write_bytes" ID="ID_1142458072" CREATED="1709637903579" MODIFIED="1709637903579"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics  --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; disk.all.read disk.all.write disk.all.read_bytes disk.all.write_bytes" ID="ID_1477183636" CREATED="1709640324007" MODIFIED="1709645517558"/>
+</node>
+<node TEXT="per-device" ID="ID_604536652" CREATED="1709638033047" MODIFIED="1709638034939">
+<node TEXT="r/s" ID="ID_356802271" CREATED="1706694746185" MODIFIED="1706694749138">
+<node TEXT="disk.dev.read" ID="ID_869096861" CREATED="1709637814140" MODIFIED="1709638053573"/>
+</node>
+<node TEXT="w/s" ID="ID_963629096" CREATED="1706694764682" MODIFIED="1706694766414">
+<node TEXT="disk.dev.write" ID="ID_1913894251" CREATED="1709637823480" MODIFIED="1709638061246"/>
+</node>
+<node TEXT="r b/s" ID="ID_290022653" CREATED="1706694752991" MODIFIED="1709637857303">
+<node TEXT="disk.dev.read_bytes" ID="ID_101484574" CREATED="1709637895163" MODIFIED="1709638066799"/>
+</node>
+<node TEXT="w b/s" ID="ID_1688400282" CREATED="1706694779890" MODIFIED="1709637865043">
+<node TEXT="disk.dev.write_bytes" ID="ID_336573276" CREATED="1709637903579" MODIFIED="1709638072587"/>
+</node>
+<node TEXT="avg q len" ID="ID_427576357" CREATED="1709637936655" MODIFIED="1709637941091">
+<node TEXT="disk.dev.avg_qlen" ID="ID_1762904085" CREATED="1709637950062" MODIFIED="1709638145458"/>
+</node>
+<node TEXT="%util" ID="ID_749735079" CREATED="1706694782020" MODIFIED="1706694788850">
+<node TEXT="disk.dev.util" ID="ID_1656846497" CREATED="1709638147434" MODIFIED="1709638149806"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; disk.dev.read disk.dev.write disk.dev.read_bytes disk.dev.write_bytes disk.dev.avg_qlen disk.dev.util" ID="ID_1475836223" CREATED="1709641434974" MODIFIED="1709645513371"/>
+</node>
+</node>
+</node>
+<node TEXT="Hot processes" ID="ID_1623275213" CREATED="1709636845671" MODIFIED="1709636849499">
+<node TEXT="pminfo hotproc" ID="ID_1296142633" CREATED="1709636853432" MODIFIED="1709636857126">
+<node TEXT="only if /var/lib/pcp/pmdas/proc/hotproc.conf is setup or so" ID="ID_897482847" CREATED="1709644902465" MODIFIED="1709644940271"/>
+<node TEXT="https://pcp.readthedocs.io/en/latest/QG/QuickReferenceGuide.html#monitoring-hot-processes-with-hotproc" ID="ID_1593755868" CREATED="1709644948550" MODIFIED="1709644948550" LINK="https://pcp.readthedocs.io/en/latest/QG/QuickReferenceGuide.html#monitoring-hot-processes-with-hotproc"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;5 minutes ago&apos; --interval=1minute --archive=ocitest01 --metrics --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; hotproc.nprocs hotproc.psinfo.cmd hotproc.psinfo.oom_score hotproc.psinfo.priority hotproc.psinfo.threads hotproc.psinfo.rss hotproc.memory.rss hotproc.psinfo.vsize hotproc.memory.size hotproc.memory.vmpte hotproc.memory.vmhwm hotproc.memory.vmswap hotproc.psinfo.start_time hotproc.psinfo.stime hotproc.psinfo.utime hotproc.schedstat.cpu_time hotproc.total.cpuidle hotproc.total.cpuburn hotproc.io.write_bytes hotproc.io.read_bytes" ID="ID_1658059362" CREATED="1709644907705" MODIFIED="1709644907705"/>
 </node>
 <node TEXT="Network" ID="ID_1396212895" CREATED="1706691235739" MODIFIED="1706691237311">
+<node TEXT="Overall" FOLDED="true" ID="ID_1167292644" CREATED="1709647549751" MODIFIED="1709733812390">
+<icon BUILTIN="button_cancel"/>
+<node TEXT="Not available" ID="ID_971787842" CREATED="1709733788783" MODIFIED="1709733795424"/>
+<node TEXT="Requires setup first" ID="ID_1354552734" CREATED="1709732355432" MODIFIED="1709732359674">
+<node TEXT="/var/lib/pcp/config/pmlogger/config.default" ID="ID_1632666169" CREATED="1709732370634" MODIFIED="1709732370634">
+<node TEXT="log mandatory on every 60 minutes {&#xa;   network.all.in.bytes&#xa;   network.all.out.bytes&#xa;   network.all.total.bytes&#xa;}" ID="ID_1487203954" CREATED="1703240595146" MODIFIED="1709732640839"/>
+</node>
+</node>
 <node TEXT="Bandwidth Usage" ID="ID_91567600" CREATED="1706691346000" MODIFIED="1706691351487">
-<node TEXT="Overall" ID="ID_496068986" CREATED="1706691368675" MODIFIED="1706691371535"/>
-<node TEXT="Per interface" ID="ID_319467177" CREATED="1706691365026" MODIFIED="1706691368282"/>
+<node TEXT="network.all.in.bytes" ID="ID_1208796601" CREATED="1709647589116" MODIFIED="1709647589116"/>
+<node TEXT="network.all.out.bytes" ID="ID_303333422" CREATED="1709647596397" MODIFIED="1709647596397"/>
+<node TEXT="network.all.total.bytes" ID="ID_1524389307" CREATED="1709647604902" MODIFIED="1709647604902"/>
 </node>
 <node TEXT="Error percentage" ID="ID_1281248416" CREATED="1706691352515" MODIFIED="1706691361576">
-<node TEXT="Overall" ID="ID_1300586757" CREATED="1706691368675" MODIFIED="1706691371535"/>
-<node TEXT="Per interface" ID="ID_91506490" CREATED="1706691365026" MODIFIED="1706691368282"/>
+<node TEXT="in" ID="ID_442234301" CREATED="1709647728287" MODIFIED="1709647736477">
+<node TEXT="network.all.in.packets" ID="ID_650816669" CREATED="1709647672841" MODIFIED="1709647672841"/>
+<node TEXT="network.all.in.errors" ID="ID_359969061" CREATED="1709647704551" MODIFIED="1709647704551"/>
+<node TEXT="network.all.in.drops" ID="ID_296233013" CREATED="1709647704551" MODIFIED="1709647704551"/>
+</node>
+<node TEXT="out" ID="ID_1400456696" CREATED="1709647730534" MODIFIED="1709647732675">
+<node TEXT="network.all.out.packets" ID="ID_1568289699" CREATED="1709647737807" MODIFIED="1709647737807"/>
+<node TEXT="network.all.out.errors" ID="ID_1627678349" CREATED="1709647737807" MODIFIED="1709647737807"/>
+<node TEXT="network.all.out.drops" ID="ID_1640825177" CREATED="1709647737808" MODIFIED="1709647737808"/>
+</node>
+<node TEXT="total" ID="ID_1719632731" CREATED="1709647745091" MODIFIED="1709647746353">
+<node TEXT="network.all.total.packets" ID="ID_955986688" CREATED="1709647754413" MODIFIED="1709647754413"/>
+<node TEXT="network.all.total.errors" ID="ID_52769212" CREATED="1709647754413" MODIFIED="1709647754413"/>
+<node TEXT="network.all.total.drops" ID="ID_1902840097" CREATED="1709647754414" MODIFIED="1709647754414"/>
+</node>
+</node>
+</node>
+<node TEXT="Per interface" ID="ID_1990051962" CREATED="1709647551547" MODIFIED="1709647555082">
+<node TEXT="Bandwidth Usage" ID="ID_1247100018" CREATED="1706691346000" MODIFIED="1706691351487">
+<node TEXT="network.interface.in.bytes" ID="ID_1626077276" CREATED="1709647790902" MODIFIED="1709647790902"/>
+<node TEXT="network.interface.out.bytes" ID="ID_692031094" CREATED="1709647803471" MODIFIED="1709647803471"/>
+<node TEXT="network.interface.total.bytes" ID="ID_1039104421" CREATED="1709647822604" MODIFIED="1709647822604"/>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; network.interface.in.bytes network.interface.out.bytes network.interface.total.bytes" ID="ID_356179703" CREATED="1709733899886" MODIFIED="1709733899886"/>
+</node>
+<node TEXT="Error percentage" ID="ID_1169983318" CREATED="1706691352515" MODIFIED="1706691361576">
+<node TEXT="in" ID="ID_224906322" CREATED="1709647790028" MODIFIED="1709647790390">
+<node TEXT="network.interface.in.packets" ID="ID_1112334689" CREATED="1709647790902" MODIFIED="1709647790902"/>
+<node TEXT="network.interface.in.errors" ID="ID_48491700" CREATED="1709647790903" MODIFIED="1709647790903"/>
+<node TEXT="network.interface.in.drops" ID="ID_1331575814" CREATED="1709647790904" MODIFIED="1709647790904"/>
+</node>
+<node TEXT="out" ID="ID_1806411535" CREATED="1709647793106" MODIFIED="1709647793991">
+<node TEXT="network.interface.out.packets" ID="ID_705153324" CREATED="1709647803471" MODIFIED="1709647803471"/>
+<node TEXT="network.interface.out.errors" ID="ID_1163575115" CREATED="1709647803473" MODIFIED="1709647803473"/>
+<node TEXT="network.interface.out.drops" ID="ID_1989951274" CREATED="1709647803473" MODIFIED="1709647803473"/>
+</node>
+<node TEXT="total" ID="ID_908389030" CREATED="1709647813249" MODIFIED="1709647814261">
+<node TEXT="network.interface.total.packets" ID="ID_1731782575" CREATED="1709647822604" MODIFIED="1709647822604"/>
+<node TEXT="network.interface.total.errors" ID="ID_1148727677" CREATED="1709647822605" MODIFIED="1709647822605"/>
+<node TEXT="network.interface.total.drops" ID="ID_956447621" CREATED="1709647822605" MODIFIED="1709647822605"/>
+</node>
+<node TEXT="pmdumptext --start=&apos;2 days ago&apos; --interval=1hour --archive=ocitest01 --align=1day --metrics --unit --delimiter=, --time-format=&apos;%Y-%m-%d %H:%M&apos; network.interface.in.packets network.interface.in.errors network.interface.in.drops network.interface.out.packets network.interface.out.errors network.interface.out.drops network.interface.total.packets network.interface.total.errors network.interface.total.drops" ID="ID_1438206519" CREATED="1709734682357" MODIFIED="1709734682357"/>
+</node>
 </node>
 </node>
 </node>
