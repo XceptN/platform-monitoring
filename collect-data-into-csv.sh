@@ -33,13 +33,13 @@ $PCMD kernel.percpu.cpu.idle \
     | tail +3 \
     > $TMPDIR/multi_cpu_raw.csv
 
-echo "Date,Time,CPU,Busy" > $TMPDIR/final/multi_cpu.csv
-echo "none,none,string,%" >> $TMPDIR/final/multi_cpu.csv
+echo "Date,Time,CPU#,Busy" > $TMPDIR/final/multi_cpu.csv
+echo "none,none,none,%" >> $TMPDIR/final/multi_cpu.csv
 
 for ((CPU=0; CPU<$NPROC; CPU++))
 do 
     PRINCOL=$((3+$CPU*1))
 #    echo "CPU=$CPU"
 #    echo "PRINCOL=$PRINCOL"
-    awk -F, '{ printf "%s,%s,cpu'"$CPU"',%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
+    awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
 done
