@@ -51,6 +51,20 @@ $PCMD kernel.all.load \
     > $TMPDIR/final/loadavg.csv
 
 # Virtual Memory Stats
+$PCMD \
+    mem.physmem \
+    mem.util.free \
+    mem.util.available \
+    mem.util.pageTables \
+    mem.util.bufmem \
+    mem.util.cached \
+    mem.util.slab \
+    mem.util.swapTotal \
+    mem.util.swapFree \
+    | grep -v '?' \
+    | sed 's/^Time/Date,Time/' \
+    | sed 's/^none/none,none/' \
+    > $TMPDIR/final/memory.csv
 
 
 # Disk spaces
