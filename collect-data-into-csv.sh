@@ -4,7 +4,7 @@ TMPDIR=/tmp/$RANDOM
 
 mkdir -p $TMPDIR/final
 
-#PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)$HOSTNAME.*/\1/"`
+#PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)$HOSTNAME.*/\1/")
 PARCHDIR='/var/log/pcp/pmlogger'
 PSTART='yesterday'
 PINTERVAL='1hour'
