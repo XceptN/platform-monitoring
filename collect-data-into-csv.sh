@@ -86,15 +86,15 @@ disk_free () {
 # I/O Rate stats
 io_rate_stats () {
     # Overall I/O rates
-#    $PCMD \
-#        disk.all.read \
-#        disk.all.write \
-#        disk.all.read_bytes \
-#        disk.all.write_bytes \
-#        | grep -v '?' \
-#        | sed 's/^Time/Date,Time/' \
-#        | sed 's/^none/none,none/' \
-#        > $TMPDIR/final/io_rates_overall.csv
+    $PCMD \
+        disk.all.read \
+        disk.all.write \
+        disk.all.read_bytes \
+        disk.all.write_bytes \
+        | grep -v '?' \
+        | sed 's/^Time/Date,Time/' \
+        | sed 's/^none/none,none/' \
+        > $TMPDIR/final/io_rates_overall.csv
 
     # Per-device I/O rates
     $PCMD \
@@ -106,8 +106,8 @@ io_rate_stats () {
         disk.dev.util \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' 
-#        > $TMPDIR/io_rates_perdevice_raw.csv
+        | sed 's/^none/none,none/' \
+        > $TMPDIR/io_rates_perdevice_raw.csv
 # Use below for final output
 #        > $TMPDIR/final/io_rates_perdevice.csv
 }
