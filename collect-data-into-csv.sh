@@ -83,10 +83,21 @@ disk_free () {
         > $TMPDIR/final/diskfree.csv
 }
 
-
-
 # I/O Rate stats
+io_rate_stats () {
+    # Overall I/O rates
+    $PCMD \
+        disk.all.read \
+        disk.all.write \
+        disk.all.read_bytes \
+        disk.all.write_bytes \
+        | grep -v '?' \
+        | sed 's/^Time/Date,Time/' \
+        | sed 's/^none/none,none/' 
+        > $TMPDIR/final/io_rates_overall.csv
 
+    # Per-device I/O rates
+}
 
 # Network stats
 
@@ -101,8 +112,7 @@ cd $PARCHDIR
 #load_average
 #virtual_memory
 #disk_free
-
-# I/O Rate stats
+io_rate_stats
 
 
 # Network stats
