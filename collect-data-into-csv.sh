@@ -86,17 +86,30 @@ disk_free () {
 # I/O Rate stats
 io_rate_stats () {
     # Overall I/O rates
+#    $PCMD \
+#        disk.all.read \
+#        disk.all.write \
+#        disk.all.read_bytes \
+#        disk.all.write_bytes \
+#        | grep -v '?' \
+#        | sed 's/^Time/Date,Time/' \
+#        | sed 's/^none/none,none/' \
+#        > $TMPDIR/final/io_rates_overall.csv
+
+    # Per-device I/O rates
     $PCMD \
-        disk.all.read \
-        disk.all.write \
-        disk.all.read_bytes \
-        disk.all.write_bytes \
+        disk.dev.read \
+        disk.dev.write \
+        disk.dev.read_bytes \
+        disk.dev.write_bytes \
+        disk.dev.avg_qlen \
+        disk.dev.util \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' 
-        > $TMPDIR/final/io_rates_overall.csv
-
-    # Per-device I/O rates
+#        > $TMPDIR/io_rates_perdevice_raw.csv
+# Use below for final output
+#        > $TMPDIR/final/io_rates_perdevice.csv
 }
 
 # Network stats
