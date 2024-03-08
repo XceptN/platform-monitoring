@@ -79,8 +79,8 @@ disk_free () {
         filesys.freefiles \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' 
-#        > $TMPDIR/final/diskfree.csv
+        | sed 's/^none/none,none/' \
+        > $TMPDIR/final/diskfree.csv
 }
 
 
@@ -100,7 +100,7 @@ cd $PARCHDIR
 #multi_cpu_busy
 #load_average
 #virtual_memory
-disk_free
+#disk_free
 
 # I/O Rate stats
 
