@@ -4,8 +4,6 @@ TMPDIR=/tmp/$RANDOM
 mkdir -p $TMPDIR/final
 
 PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)\/.*\/.*/\1/")
-#PARCHDIR='/var/log/pcp/pmlogger'
-echo $PARCHDIR
 PSTART='yesterday'
 PINTERVAL='1hour'
 PHOST=$HOSTNAME
@@ -78,7 +76,7 @@ virtual_memory () {
 disk_free () {
     $PCMD \
         filesys.free \
-        filesys.freefiles \ 
+        filesys.freefiles \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
@@ -98,7 +96,7 @@ disk_free () {
 cd $PARCHDIR
 
 # Call modules
-cpu_general
+#cpu_general
 #multi_cpu_busy
 #load_average
 #virtual_memory
