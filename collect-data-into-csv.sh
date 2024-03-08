@@ -125,7 +125,7 @@ cd $PARCHDIR
 #load_average
 #virtual_memory
 #disk_free
-io_rate_stats
+#io_rate_stats
 
 
 # Network stats
