@@ -1,11 +1,11 @@
 #!/bin/bash
 
 TMPDIR=/tmp/$RANDOM
-
 mkdir -p $TMPDIR/final
 
-#PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)$HOSTNAME.*/\1/")
-PARCHDIR='/var/log/pcp/pmlogger'
+PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)\/.*\/.*/\1/")
+#PARCHDIR='/var/log/pcp/pmlogger'
+echo $PARCHDIR
 PSTART='yesterday'
 PINTERVAL='1hour'
 PHOST=$HOSTNAME
@@ -74,15 +74,14 @@ virtual_memory () {
 }
 
 
-# Disk Free - for whatever reason - this fails on my laptop - while it works on ocitest01
+# Disk Free 
 disk_free () {
-    # TODO - convert this into a per-FS layout having FS as a column
     $PCMD \
         filesys.free \
         filesys.freefiles \ 
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' 
+        | sed 's/^none/none,none/' \
         > $TMPDIR/final/diskfree.csv
 }
 
@@ -93,11 +92,13 @@ disk_free () {
 
 # Network stats
 
+###############################################
 # Main
+###############################################
 cd $PARCHDIR
 
 # Call modules
-#cpu_general
+cpu_general
 #multi_cpu_busy
 #load_average
 #virtual_memory
