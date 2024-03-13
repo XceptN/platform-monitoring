@@ -35,9 +35,10 @@ multi_cpu_busy () {
     echo "Date,Time,CPU#,Busy" > $TMPDIR/final/multi_cpu.csv
     echo "none,none,none,%" >> $TMPDIR/final/multi_cpu.csv
 
+    NUMCOLMN=1 # Number of columns in raw file
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
-        PRINCOL=$((3+$CPU*1))
+        PRINCOL=$((3+$CPU*$NUMCOLMN))
         echo "CPU=$CPU"
         echo "PRINCOL=$PRINCOL"
         awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
@@ -113,6 +114,37 @@ io_rate_stats () {
 }
 
 # Network stats
+network_stats () {
+    # Bandwidth usage
+    $PCMD \
+        network.interface.in.bytes \
+        network.interface.out.bytes \
+        network.interface.total.bytes \
+        | grep -v '?' \
+        | sed 's/^Time/Date,Time/' \
+        | sed 's/^none/none,none/' \
+        > $TMPDIR/network_bandwidth_usage_raw.csv
+# Use below for final output
+#        > $TMPDIR/final/network_bandwidth_usage.csv
+
+    # Error stats
+    $PCMD \
+        network.interface.in.packets \
+        network.interface.in.errors \
+        network.interface.in.drops \
+        network.interface.out.packets \
+        network.interface.out.errors \
+        network.interface.out.drops \
+        network.interface.total.packets \
+        network.interface.total.errors \
+        network.interface.total.drops \
+        | grep -v '?' \
+        | sed 's/^Time/Date,Time/' \
+        | sed 's/^none/none,none/' \
+        > $TMPDIR/network_error_rates_raw.csv
+# Use below for final output
+#        > $TMPDIR/final/network_error_rates.csv
+}
 
 ###############################################
 # Main
@@ -126,6 +158,4 @@ cd $PARCHDIR
 #virtual_memory
 #disk_free
 #io_rate_stats
-
-
-# Network stats
+network_stats
