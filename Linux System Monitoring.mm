@@ -276,6 +276,10 @@
 <node TEXT="ip -o link show | awk -F: &apos;{ print $2 }&apos; | sed &apos;s/ //&apos;" ID="ID_1843512161" CREATED="1709797335132" MODIFIED="1709797335132"/>
 <node TEXT="ip -o link show | sed &apos;s/[[:digit:]]+: \([[:alnum:]]+\):.*/\1/&apos;" ID="ID_570355025" CREATED="1709797728402" MODIFIED="1709797748219"/>
 </node>
+<node TEXT="Ubuntu icin" ID="ID_880285253" CREATED="1710750893054" MODIFIED="1710752321442">
+<node TEXT="pmlogconf -r  /var/lib/pcp/config/pmlogger/config.default" ID="ID_932980194" CREATED="1710750842116" MODIFIED="1710750842116"/>
+<node TEXT="tek tek soruyor" ID="ID_1186430398" CREATED="1710750847602" MODIFIED="1710750851456"/>
+</node>
 <node TEXT="vispeahen icin tablolari her biri bir interface icin olacak sekilde ayirmak gerekebilir" ID="ID_155975504" CREATED="1709794608830" MODIFIED="1709794630728">
 <node TEXT="cunku tablo kolon sayilari dinamik olmayacak" ID="ID_1710092474" CREATED="1709794632612" MODIFIED="1709794642048"/>
 <node TEXT="Ya da network interface kolonu ekleyip, veriyi ona gore duzenleyebiliriz .." ID="ID_1251713495" CREATED="1709800835331" MODIFIED="1709800861303"/>

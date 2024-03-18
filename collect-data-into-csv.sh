@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TMPDIR=/tmp/$RANDOM
+TMPDIR=/tmp/platform-monitoring-$RANDOM
 mkdir -p $TMPDIR/final
 
 PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)\/.*\/.*/\1/")
