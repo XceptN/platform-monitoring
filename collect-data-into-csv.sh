@@ -114,6 +114,7 @@ io_rate_stats () {
 }
 
 # Network stats
+# This requires the network.interface stats enabled on Ubuntu.
 network_stats () {
     # Bandwidth usage
     $PCMD \
