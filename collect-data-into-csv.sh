@@ -86,7 +86,7 @@ disk_free () {
 
     # Get count of devices from raw data
     NUMDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
-    echo "NUMDISK=$NUMDISK"
+    #echo "NUMDISK=$NUMDISK"
     # Get list of devices from raw data
     LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
     #echo "LISTDISK=$LISTDISK"
@@ -102,12 +102,12 @@ disk_free () {
     DSKN=0
     for DSK in $LISTDISK
     do
-        echo "$DSKN:$DSK"
+        #echo "$DSKN:$DSK"
         CAPCOL=$((3+$DSKN))
         FREECOL=$(($CAPCOL+$NUMDISK))
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
-        tail -n +3 $TMPDIR/diskfree_raw.csv | head -3 | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
+        tail -n +3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
         DSKN=$(($DSKN+1))
     done
 
