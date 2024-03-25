@@ -107,9 +107,9 @@ disk_free () {
         do
             echo "$DSKN,$DSK,$TYP"
             CAPCOL=$((3+$TYP*$NUMDISK+$DSKN))
-            FREECOL=$(($CAPCOL+1))
-            AVLCOL=$(($FREECOL+1))
-            FULLCOL=$(($AVLCOL+1))            
+            FREECOL=$(($CAPCOL+$NUMDISK))
+            AVLCOL=$(($FREECOL+$NUMDISK))
+            FULLCOL=$(($AVLCOL+$NUMDISK))            
             tail -n 3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
         done
         DSKN=$(($DSKN+1))
