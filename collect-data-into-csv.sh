@@ -27,19 +27,20 @@ cpu_general () {
 
 # Multi-CPU busy rates
 multi_cpu_busy () {
+    RAWCSV=$TMPDIR/multi_cpu_raw.csv
+    FINALCSV=$TMPDIR/final/multi_cpu.csv
     $PCMD kernel.percpu.cpu.idle \
         | grep -v '?' \
         | tail -n +3 \
-        > $TMPDIR/multi_cpu_raw.csv
+        > $RAWCSV
 
-    echo "Date,Time,CPU#,Busy" > $TMPDIR/final/multi_cpu.csv
-    echo "none,none,none,%" >> $TMPDIR/final/multi_cpu.csv
+    echo "Date,Time,CPU#,Busy" > $FINALCSV
+    echo "none,none,none,%" >> $FINALCSV
 
-    NUMCOLMN=1 # Number of columns in raw file
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
-        PRINCOL=$((3+$CPU*$NUMCOLMN))
-        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
+        PRINCOL=$((3+$CPU))
+        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
     done
 }
 
