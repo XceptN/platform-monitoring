@@ -160,6 +160,6 @@ cd $PARCHDIR
 #multi_cpu_busy
 #load_average
 #virtual_memory
-#disk_free
+disk_free
 #io_rate_stats
-network_stats
+#network_stats
