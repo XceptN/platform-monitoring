@@ -92,7 +92,7 @@ disk_free () {
     LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
 
     # Set unique types of data (from first command - 4 types -> MAX=3)
-    MAXTYP=3
+    NUMTYP=4
 
     # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
@@ -100,10 +100,10 @@ disk_free () {
 
     # For every disk
     DSKN=0
-    for DSK in LISTDISK
+    for DSK in $LISTDISK
     do
         # For every type 
-        for TYP in {0..$MAXTYP}
+        for ((TYP=0; TYP<$NUMTYP; TYP++))
         do
             echo "$DSKN,$TYP"
         done
