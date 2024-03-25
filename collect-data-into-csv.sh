@@ -73,48 +73,45 @@ virtual_memory () {
 
 # Disk Free 
 disk_free () {
+    RAWCSV="$TMPDIR/diskfree_raw.csv"
+    FINALCSV="$TMPDIR/final/diskfree.csv"
     $PCMD \
         filesys.capacity \
         filesys.free \
         filesys.avail \
         filesys.full \
         | grep -v '?' \
-        > $TMPDIR/diskfree_raw.csv
+        > $RAWCSV
 
-    echo "Date,Time,Device,Capacity,Free,Available,Full" 
-    echo "none,none,none,Kbyte,Kbyte,Kbyte,%" 
+    echo "Date,Time,Device,Capacity,Free,Available,Full" > $FINALCSV
+    echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
-    #echo "NUMDISK=$NUMDISK"
+    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
+    #echo "Debug: NUMDISK=$NUMDISK"
     # Get list of devices from raw data
-    LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
-    #echo "LISTDISK=$LISTDISK"
-    # Set unique types of data (from first command - 4 types -> MAX=3)
-    #NUMTYP=4
-    #echo "NUMTYP=$NUMTYP"
-
-    # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
-    # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
-    # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(2),3+TYPE(1)*NUMDISK+NUMDISK(2),3+TYPE(2)*NUMDISK+NUMDISK(2)
-
+    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
+    #echo "Debug: LISTDISK=$LISTDISK"
+    
+    
     # For every disk
     DSKN=0
     for DSK in $LISTDISK
     do
-        #echo "$DSKN:$DSK"
+        #echo "Debug: $DSKN:$DSK"
         CAPCOL=$((3+$DSKN))
         FREECOL=$(($CAPCOL+$NUMDISK))
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
-        tail -n +3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
+        tail -n +3 >> $RAWCSV \
+            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' >> >> $FINALCSV
         DSKN=$(($DSKN+1))
     done
 
     
     # TODO: Collect and put "mountdir" entries to the rows too
 # Use below for final output
-#        > $TMPDIR/final/diskfree.csv
+#        > 
 }
 
 # I/O Rate stats
