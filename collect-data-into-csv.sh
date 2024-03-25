@@ -89,10 +89,10 @@ disk_free () {
     echo "NUMDISK=$NUMDISK"
     # Get list of devices from raw data
     LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
-    echo "LISTDISK=$LISTDISK"
+    #echo "LISTDISK=$LISTDISK"
     # Set unique types of data (from first command - 4 types -> MAX=3)
-    NUMTYP=4
-    echo "NUMTYP=$NUMTYP"
+    #NUMTYP=4
+    #echo "NUMTYP=$NUMTYP"
 
     # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
@@ -102,16 +102,12 @@ disk_free () {
     DSKN=0
     for DSK in $LISTDISK
     do
-        # For every type 
-        for ((TYP=0; TYP<$NUMTYP; TYP++))
-        do
-            echo "$DSKN,$DSK,$TYP"
-            CAPCOL=$((3+$TYP*$NUMDISK+$DSKN))
-            FREECOL=$(($CAPCOL+$NUMDISK))
-            AVLCOL=$(($FREECOL+$NUMDISK))
-            FULLCOL=$(($AVLCOL+$NUMDISK))            
-            tail -n 3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
-        done
+        echo "$DSKN:$DSK"
+        CAPCOL=$((3+$DSKN))
+        FREECOL=$(($CAPCOL+$NUMDISK))
+        AVLCOL=$(($FREECOL+$NUMDISK))
+        FULLCOL=$(($AVLCOL+$NUMDISK))            
+        tail -n +3 $TMPDIR/diskfree_raw.csv | head -3 | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
         DSKN=$(($DSKN+1))
     done
 
