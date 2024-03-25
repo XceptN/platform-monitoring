@@ -79,12 +79,25 @@ disk_free () {
         filesys.capacity \
         filesys.free \
         filesys.avail \
-        filesys.mountdir \
         filesys.full \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
-        > $TMPDIR/final/diskfree.csv
+        > $TMPDIR/diskfree_raw.csv
+
+    # Get count of devices from raw data
+    NUMDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
+    
+    # Get list of devices from raw data
+    LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
+
+    # Set number of types of columns
+
+
+
+    # TODO: Collect and put "mountdir" entries to the rows too
+# Use below for final output
+#        > $TMPDIR/final/diskfree.csv
 }
 
 # I/O Rate stats
