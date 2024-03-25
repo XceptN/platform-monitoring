@@ -27,21 +27,20 @@ cpu_general () {
 
 # Multi-CPU busy rates
 multi_cpu_busy () {
+    RAWCSV=$TMPDIR/multi_cpu_raw.csv
+    FINALCSV=$TMPDIR/final/multi_cpu.csv
     $PCMD kernel.percpu.cpu.idle \
         | grep -v '?' \
-        | tail +3 \
-        > $TMPDIR/multi_cpu_raw.csv
+        | tail -n +3 \
+        > $RAWCSV
 
-    echo "Date,Time,CPU#,Busy" > $TMPDIR/final/multi_cpu.csv
-    echo "none,none,none,%" >> $TMPDIR/final/multi_cpu.csv
+    echo "Date,Time,CPU#,Busy" > $FINALCSV
+    echo "none,none,none,%" >> $FINALCSV
 
-    NUMCOLMN=1 # Number of columns in raw file
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
-        PRINCOL=$((3+$CPU*$NUMCOLMN))
-        echo "CPU=$CPU"
-        echo "PRINCOL=$PRINCOL"
-        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
+        PRINCOL=$((3+$CPU))
+        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
     done
 }
 
@@ -60,7 +59,7 @@ virtual_memory () {
         mem.physmem \
         mem.util.free \
         mem.util.available \
-        em.util.pageTables \
+        mem.util.pageTables \
         mem.util.bufmem \
         mem.util.cached \
         mem.util.slab \
@@ -75,16 +74,46 @@ virtual_memory () {
 
 # Disk Free 
 disk_free () {
+    RAWCSV=$TMPDIR/diskfree_raw.csv
+    FINALCSV=$TMPDIR/final/diskfree.csv
     $PCMD \
         filesys.capacity \
         filesys.free \
         filesys.avail \
-        filesys.mountdir \
         filesys.full \
         | grep -v '?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
-        > $TMPDIR/final/diskfree.csv
+        > $RAWCSV
+
+    echo "Date,Time,Device,Capacity,Free,Available,Full" > $FINALCSV
+    echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
+
+    # Get count of devices from raw data
+    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
+    #echo "Debug: NUMDISK=$NUMDISK"
+    # Get list of devices from raw data
+    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
+    #echo "Debug: LISTDISK=$LISTDISK"
+    
+    
+    # For every disk
+    DSKN=0
+    for DSK in $LISTDISK
+    do
+        #echo "Debug: $DSKN:$DSK"
+        CAPCOL=$((3+$DSKN))
+        FREECOL=$(($CAPCOL+$NUMDISK))
+        AVLCOL=$(($FREECOL+$NUMDISK))
+        FULLCOL=$(($AVLCOL+$NUMDISK))            
+        tail -n +3 $RAWCSV \
+            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
+            >> $FINALCSV
+        DSKN=$(($DSKN+1))
+    done
+
+    
+    # TODO: Collect and put "mountdir" entries to the rows too
+# Use below for final output
+#        > 
 }
 
 # I/O Rate stats
