@@ -110,7 +110,7 @@ disk_free () {
             FREECOL=$(($CAPCOL+1))
             AVLCOL=$(($FREECOL+1))
             FULLCOL=$(($AVLCOL+1))            
-            tail -n 3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,$DSK,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
+            tail -n 3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
         done
         DSKN=$(($DSKN+1))
     done
