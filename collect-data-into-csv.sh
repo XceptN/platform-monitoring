@@ -91,10 +91,26 @@ disk_free () {
     # Get list of devices from raw data
     LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
 
-    # Set number of types of columns
+    # Set unique types of data (from first command - 4 types -> MAX=3)
+    MAXTYP=3
 
+    # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
+    # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
+    # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(2),3+TYPE(1)*NUMDISK+NUMDISK(2),3+TYPE(2)*NUMDISK+NUMDISK(2)
 
+    # For every disk
+    DSKN=0
+    for DSK in LISTDISK
+    do
+        # For every type 
+        for TYP in {0..$MAXTYP}
+        do
+            echo "$DSKN,$TYP"
+        done
+        DSKN=$(($DSKN+1))
+    done
 
+    
     # TODO: Collect and put "mountdir" entries to the rows too
 # Use below for final output
 #        > $TMPDIR/final/diskfree.csv
