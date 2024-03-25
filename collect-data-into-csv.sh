@@ -39,8 +39,6 @@ multi_cpu_busy () {
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
         PRINCOL=$((3+$CPU*$NUMCOLMN))
-        echo "CPU=$CPU"
-        echo "PRINCOL=$PRINCOL"
         awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $TMPDIR/multi_cpu_raw.csv >> $TMPDIR/final/multi_cpu.csv
     done
 }
@@ -60,7 +58,7 @@ virtual_memory () {
         mem.physmem \
         mem.util.free \
         mem.util.available \
-        em.util.pageTables \
+        mem.util.pageTables \
         mem.util.bufmem \
         mem.util.cached \
         mem.util.slab \
@@ -81,9 +79,11 @@ disk_free () {
         filesys.avail \
         filesys.full \
         | grep -v '?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
+        | tail +3 \
         > $TMPDIR/diskfree_raw.csv
+
+    echo "Date,Time,Device,Capacity,Free,Available,Full" 
+    echo "none,none,none,Kbyte,Kbyte,Kbyte,%" 
 
     # Get count of devices from raw data
     NUMDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
@@ -105,7 +105,12 @@ disk_free () {
         # For every type 
         for ((TYP=0; TYP<$NUMTYP; TYP++))
         do
-            echo "$DSKN,$TYP"
+            #echo "$DSKN,$DSK,$TYP"
+            CAPCOL=$((3+$TYP*$NUMDISK+$DSKN))
+            FREECOL=$(($CAPCOL+1))
+            AVLCOL=$(($FREECOL+1))
+            FULLCOL=$(($AVLCOL+1))            
+            awk -F, '{ printf "%s,%s,%s,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $DSK, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' $TMPDIR/diskfree_raw.csv 
         done
         DSKN=$(($DSKN+1))
     done
