@@ -103,8 +103,9 @@ disk_free () {
         FREECOL=$(($CAPCOL+$NUMDISK))
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
-        tail -n +3 >> $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' >> $FINALCSV
+        tail -n +3 $RAWCSV \
+            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
+            >> $FINALCSV
         DSKN=$(($DSKN+1))
     done
 
