@@ -79,7 +79,6 @@ disk_free () {
         filesys.avail \
         filesys.full \
         | grep -v '?' \
-        | tail -n +3 \
         > $TMPDIR/diskfree_raw.csv
 
     echo "Date,Time,Device,Capacity,Free,Available,Full" 
@@ -94,7 +93,7 @@ disk_free () {
     # Set unique types of data (from first command - 4 types -> MAX=3)
     NUMTYP=4
     echo "NUMTYP=$NUMTYP"
-    
+
     # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(2),3+TYPE(1)*NUMDISK+NUMDISK(2),3+TYPE(2)*NUMDISK+NUMDISK(2)
@@ -111,7 +110,7 @@ disk_free () {
             FREECOL=$(($CAPCOL+1))
             AVLCOL=$(($FREECOL+1))
             FULLCOL=$(($AVLCOL+1))            
-            awk -F, '{ printf "%s,%s,%s,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $DSK, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' $TMPDIR/diskfree_raw.csv 
+            tail -n 3 $TMPDIR/diskfree_raw.csv | awk -F, '{ printf "%s,%s,%s,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $DSK, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' 
         done
         DSKN=$(($DSKN+1))
     done
