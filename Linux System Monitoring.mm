@@ -94,6 +94,12 @@
 <node TEXT="Debian" ID="ID_1230709484" CREATED="1706690882760" MODIFIED="1706690885110"/>
 </node>
 <node TEXT="What to Log with PCP" POSITION="left" ID="ID_1289951742" CREATED="1706691168762" MODIFIED="1706691173715">
+<node TEXT="Config before data collection" ID="ID_1338257034" CREATED="1710769024908" MODIFIED="1710769033872">
+<node TEXT="pmlogger/config.default dosyasina ekleme" ID="ID_867122702" CREATED="1710769035414" MODIFIED="1710769048113">
+<node TEXT="# BiSoft Monitoring Extras&#xa;log advisory on default {&#xa;        filesys.capacity&#xa;        filesys.free&#xa;        filesys.avail&#xa;        filesys.used&#xa;        filesys.freefiles&#xa;        filesys.mountdir&#xa;        filesys.full&#xa;        network.interface.in.bytes&#xa;        network.interface.out.bytes&#xa;        network.interface.total.bytes&#xa;        network.interface.in.packets&#xa;        network.interface.in.errors&#xa;        network.interface.in.drops&#xa;        network.interface.out.packets&#xa;        network.interface.out.errors&#xa;        network.interface.out.drops&#xa;        network.interface.total.packets&#xa;        network.interface.total.errors&#xa;        network.interface.total.drops&#xa;}" ID="ID_33600885" CREATED="1710769159258" MODIFIED="1710937427510"/>
+</node>
+<node TEXT="systemctl restart pmlogger" ID="ID_342832617" CREATED="1710769192760" MODIFIED="1710769200869"/>
+</node>
 <node TEXT="CPU" ID="ID_908336688" CREATED="1706691225346" MODIFIED="1706691226182">
 <node TEXT="overall" ID="ID_221053554" CREATED="1709794504119" MODIFIED="1709794505770">
 <node TEXT="kernel.cpu.util.user" ID="ID_637030391" CREATED="1706691211040" MODIFIED="1706691215791"/>

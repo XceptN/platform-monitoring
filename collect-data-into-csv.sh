@@ -76,8 +76,11 @@ virtual_memory () {
 # Disk Free 
 disk_free () {
     $PCMD \
+        filesys.capacity \
         filesys.free \
-        filesys.freefiles \
+        filesys.avail \
+        filesys.mountdir \
+        filesys.full \
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
