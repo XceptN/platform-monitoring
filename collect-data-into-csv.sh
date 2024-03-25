@@ -87,13 +87,14 @@ disk_free () {
 
     # Get count of devices from raw data
     NUMDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
-    
+    echo "NUMDISK=$NUMDISK"
     # Get list of devices from raw data
     LISTDISK=$(head -1 $TMPDIR/diskfree_raw.csv | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
-
+    echo "LISTDISK=$LISTDISK"
     # Set unique types of data (from first command - 4 types -> MAX=3)
     NUMTYP=4
-
+    echo "NUMTYP=$NUMTYP"
+    
     # Disk0: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(0),3+TYPE(1)*NUMDISK+NUMDISK(0),3+TYPE(2)*NUMDISK+NUMDISK(0)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(1),3+TYPE(1)*NUMDISK+NUMDISK(1),3+TYPE(2)*NUMDISK+NUMDISK(1)
     # Disk1: 1,2,DISK,3+TYPE(0)*NUMDISK+NUMDISK(2),3+TYPE(1)*NUMDISK+NUMDISK(2),3+TYPE(2)*NUMDISK+NUMDISK(2)
