@@ -73,8 +73,8 @@ virtual_memory () {
 
 # Disk Free 
 disk_free () {
-    RAWCSV="$TMPDIR/diskfree_raw.csv"
-    FINALCSV="$TMPDIR/final/diskfree.csv"
+    RAWCSV=$TMPDIR/diskfree_raw.csv
+    FINALCSV=$TMPDIR/final/diskfree.csv
     $PCMD \
         filesys.capacity \
         filesys.free \
