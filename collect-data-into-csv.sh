@@ -105,7 +105,7 @@ disk_free () {
         # For every type 
         for ((TYP=0; TYP<$NUMTYP; TYP++))
         do
-            #echo "$DSKN,$DSK,$TYP"
+            echo "$DSKN,$DSK,$TYP"
             CAPCOL=$((3+$TYP*$NUMDISK+$DSKN))
             FREECOL=$(($CAPCOL+1))
             AVLCOL=$(($FREECOL+1))
