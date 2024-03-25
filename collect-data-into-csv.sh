@@ -29,7 +29,7 @@ cpu_general () {
 multi_cpu_busy () {
     $PCMD kernel.percpu.cpu.idle \
         | grep -v '?' \
-        | tail +3 \
+        | tail -n +3 \
         > $TMPDIR/multi_cpu_raw.csv
 
     echo "Date,Time,CPU#,Busy" > $TMPDIR/final/multi_cpu.csv
@@ -79,7 +79,7 @@ disk_free () {
         filesys.avail \
         filesys.full \
         | grep -v '?' \
-        | tail +3 \
+        | tail -n +3 \
         > $TMPDIR/diskfree_raw.csv
 
     echo "Date,Time,Device,Capacity,Free,Available,Full" 
