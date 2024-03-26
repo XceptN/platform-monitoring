@@ -85,6 +85,7 @@ disk_free () {
         | grep -v '?' \
         > $RAWCSV
 
+    # Add headers and units to the ultimate output file
     echo "Date,Time,Device,Capacity,Free,Available,Full" > $FINALCSV
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
@@ -141,13 +142,14 @@ io_rate_stats () {
         disk.dev.write_bytes \
         disk.dev.avg_qlen \
         disk.dev.util \
-        | grep -v '?' \
+        | grep -v ':00,?,?,?,?,?,?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
         > $RAWCSV
     
-    echo "Date,Time,Device,read,write,read_bytes,write_bytes,avg_qlen,util" 
-    echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%"
+    # Add headers and units to the ultimate output file
+    echo "Date,Time,Device,read,write,read_bytes,write_bytes,avg_qlen,util" > $FINALCSV
+    echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%" >> $FINALCSV
 
     # Get count of devices from raw data
     NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u | wc -l)
@@ -168,7 +170,8 @@ io_rate_stats () {
         AQLCOL=$(($WRBCOL+$NUMDEV))
         UTLCOL=$(($AQLCOL+$NUMDEV))
         tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' 
+            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
+            >> $FINALCSV
         DEVN=$(($DEVN+1))
     done
 
