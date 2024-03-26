@@ -130,6 +130,8 @@ io_rate_stats () {
         > $TMPDIR/final/io_rates_overall.csv
 
     # Per-device I/O rates
+    RAWCSV=$TMPDIR/io_rates_perdevice_raw.csv
+    FINALCSV=$TMPDIR/final/io_rates_perdevice.csv
     $PCMD \
         disk.dev.read \
         disk.dev.write \
@@ -140,9 +142,7 @@ io_rate_stats () {
         | grep -v '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
-        > $TMPDIR/io_rates_perdevice_raw.csv
-# Use below for final output
-#        > $TMPDIR/final/io_rates_perdevice.csv
+        > $RAWCSV
 }
 
 # Network stats
@@ -189,6 +189,6 @@ cd $PARCHDIR
 #multi_cpu_busy
 #load_average
 #virtual_memory
-disk_free
-#io_rate_stats
+#disk_free
+io_rate_stats
 #network_stats
