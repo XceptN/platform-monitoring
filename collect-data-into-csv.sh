@@ -76,6 +76,7 @@ virtual_memory () {
 disk_free () {
     RAWCSV=$TMPDIR/diskfree_raw.csv
     FINALCSV=$TMPDIR/final/diskfree.csv
+    # Generate raw data
     $PCMD \
         filesys.capacity \
         filesys.free \
@@ -132,6 +133,7 @@ io_rate_stats () {
     # Per-device I/O rates
     RAWCSV=$TMPDIR/io_rates_perdevice_raw.csv
     FINALCSV=$TMPDIR/final/io_rates_perdevice.csv
+    # Generate raw data
     $PCMD \
         disk.dev.read \
         disk.dev.write \
@@ -143,6 +145,33 @@ io_rate_stats () {
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
         > $RAWCSV
+    
+    echo "Date,Time,Device,read,write,read_bytes,write_bytes,avg_qlen,util" 
+    echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%"
+
+    # Get count of devices from raw data
+    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | wc -l)
+    #echo "Debug: NUMDEV=$NUMDEV"
+    # Get list of devices from raw data
+    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }')
+    #echo "Debug: LISTDEV=$LISTDEV"
+       
+    # For every disk device
+    DEVN=0
+    for DEV in $LISTDEV
+    do
+        #echo "Debug: $DEVN:$DEV"
+        RDCOL=$((3+$DEVN))
+        WRTCOL=$(($RDCOL+$NUMDEV))
+        RDBCOL=$(($WRTCOL+$NUMDEV))
+        WRBCOL=$(($RDBCOL+$NUMDEV))
+        AQLCOL=$(($WRBCOL+$NUMDEV))
+        UTLCOL=$(($AQLCOL+$NUMDEV))
+        tail -n +3 $RAWCSV \
+            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' 
+        DEVN=$(($DEVN+1))
+    done
+
 }
 
 # Network stats
