@@ -89,10 +89,10 @@ disk_free () {
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | wc -l)
+    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u | wc -l)
     #echo "Debug: NUMDISK=$NUMDISK"
     # Get list of devices from raw data
-    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }')
+    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u )
     #echo "Debug: LISTDISK=$LISTDISK"
     
     
@@ -150,10 +150,10 @@ io_rate_stats () {
     echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%"
 
     # Get count of devices from raw data
-    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | wc -l)
+    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u | wc -l)
     #echo "Debug: NUMDEV=$NUMDEV"
     # Get list of devices from raw data
-    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }')
+    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u )
     #echo "Debug: LISTDEV=$LISTDEV"
        
     # For every disk device
