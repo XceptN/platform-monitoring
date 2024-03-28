@@ -249,7 +249,7 @@ network_stats () {
         TOTPCOL=$(($OUTDCOL+$NUMNIC))
         TOTECOL=$(($TOTPCOL+$NUMNIC))
         TOTDCOL=$(($TOTECOL+$NUMNIC))
-        tail -n +3 $RAWBAND \
+        tail -n +3 $RAWERR \
             | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", $1, $2, \
             $'$INPCOL', $'$INECOL', $'$INDCOL', \
             $'$OUTPCOL', $'$OUTECOL', $'$OUTDCOL', \
