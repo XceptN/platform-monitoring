@@ -91,11 +91,11 @@ disk_free () {
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDISK=$NUMDISK"
 
     # Get list of devices from raw data
-    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u )
+    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDISK=$LISTDISK"
     
     
@@ -151,11 +151,11 @@ io_rate_stats () {
     echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDEV=$NUMDEV"
 
     # Get list of devices from raw data
-    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u )
+    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDEV=$LISTDEV"
        
     # For every disk device
@@ -194,11 +194,11 @@ network_stats () {
     echo "none,none,none,byte / second,byte / second,byte / second,byte / second" >> $FINALBAND
 
     # Get count of NICs from raw data
-    NUMNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    NUMNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMNIC=$NUMNIC"
 
     # Get list of NICs from raw data
-    LISTNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | sort -u )
+    LISTNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTNIC=$LISTNIC"
        
     # For every NIC
