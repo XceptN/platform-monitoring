@@ -182,18 +182,21 @@ io_rate_stats () {
 # This requires the network.interface stats enabled on Ubuntu.
 network_stats () {
     # Bandwidth usage
+    RAWBAND=$TMPDIR/network_bandwidth_usage_raw.csv
+    FINALBAND=$TMPDIR/final/network_bandwidth_usage.csv
     $PCMD \
         network.interface.in.bytes \
         network.interface.out.bytes \
         network.interface.total.bytes \
-        | grep -v '?' \
+        | grep -v ':00,?,?,?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
-        > $TMPDIR/network_bandwidth_usage_raw.csv
-# Use below for final output
-#        > $TMPDIR/final/network_bandwidth_usage.csv
+        > $RAWBAND
+
 
     # Error stats
+    RAWERR=$TMPDIR/network_error_rates_raw.csv
+    FINALERR=$TMPDIR/final/network_error_rates.csv
     $PCMD \
         network.interface.in.packets \
         network.interface.in.errors \
@@ -204,12 +207,11 @@ network_stats () {
         network.interface.total.packets \
         network.interface.total.errors \
         network.interface.total.drops \
-        | grep -v '?' \
+        | grep -v ':00,?,?,?,?,?,?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
-        > $TMPDIR/network_error_rates_raw.csv
-# Use below for final output
-#        > $TMPDIR/final/network_error_rates.csv
+        > $RAWERR
+
 }
 
 ###############################################
@@ -223,5 +225,5 @@ cd $PARCHDIR
 #load_average
 #virtual_memory
 #disk_free
-io_rate_stats
-#network_stats
+#io_rate_stats
+network_stats
