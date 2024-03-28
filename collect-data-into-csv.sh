@@ -144,8 +144,6 @@ io_rate_stats () {
         disk.dev.avg_qlen \
         disk.dev.util \
         | grep -v ':00,?,?,?,?,?,?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
         > $RAWCSV
     
     # Add headers and units to the ultimate output file
@@ -189,10 +187,33 @@ network_stats () {
         network.interface.out.bytes \
         network.interface.total.bytes \
         | grep -v ':00,?,?,?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
         > $RAWBAND
 
+    # Add headers and units to the ultimate output file
+    echo "Date,Time,Interface,in,out,total" > $FINALBAND
+    echo "none,none,none,byte / second,byte / second,byte / second,byte / second" >> $FINALBAND
+
+    # Get count of NICs from raw data
+    NUMNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    #echo "Debug: NUMNIC=$NUMNIC"
+
+    # Get list of NICs from raw data
+    LISTNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | sort -u )
+    #echo "Debug: LISTNIC=$LISTNIC"
+       
+    # For every NIC
+    NICN=0
+    for NIC in $LISTNIC
+    do
+        #echo "Debug: $NICN:$NIC"
+        INBCOL=$((3+$NICN))
+        OUTBCOL=$(($INBCOL+$NUMNIC))
+        TOTBCOL=$(($OUTBCOL+$NUMNIC))
+        tail -n +3 $RAWBAND \
+            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, $'$INBCOL', $'$OUTBCOL', $'$TOTBCOL'}' \
+            >> $FINALBAND
+        NICN=$(($NICN+1))
+    done
 
     # Error stats
     RAWERR=$TMPDIR/network_error_rates_raw.csv
@@ -208,10 +229,33 @@ network_stats () {
         network.interface.total.errors \
         network.interface.total.drops \
         | grep -v ':00,?,?,?,?,?,?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
         > $RAWERR
 
+    # Add headers and units to the ultimate output file
+    echo "Date,Time,Interface,InPackets,InErrors,InDrops,OutPackets,OutErrors,OutDrops,TotalPackets,TotalErrors,TotalDrops"
+    echo "none,none,none,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second" 
+       
+    # For every NIC
+    NICN=0
+    for NIC in $LISTNIC
+    do
+        #echo "Debug: $NICN:$NIC"
+        INPCOL=$((3+$NICN))
+        INECOL=$(($INPCOL+$NUMNIC))
+        INDCOL=$(($INECOL+$NUMNIC))
+        OUTPCOL=$(($INDCOL+$NUMNIC))
+        OUTECOL=$(($OUTPCOL+$NUMNIC))
+        OUTDCOL=$(($OUTECOL+$NUMNIC))
+        TOTPCOL=$(($OUTDCOL+$NUMNIC))
+        TOTECOL=$(($TOTPCOL+$NUMNIC))
+        TOTDCOL=$(($TOTECOL+$NUMNIC))
+        tail -n +3 $RAWBAND \
+            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$INPCOL', $'$INECOL', $'$INDCOL', \
+            $'$OUTPCOL', $'$OUTECOL', $'$OUTDCOL', \
+            $'$TOTPCOL', $'$TOTECOL', $'$TOTDCOL'}' 
+        NICN=$(($NICN+1))
+    done
 }
 
 ###############################################
