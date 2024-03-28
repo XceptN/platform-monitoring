@@ -40,7 +40,8 @@ multi_cpu_busy () {
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
         PRINCOL=$((3+$CPU))
-        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
+        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, \
+        (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
     done
 }
 
@@ -91,11 +92,11 @@ disk_free () {
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDISK=$NUMDISK"
 
     # Get list of devices from raw data
-    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | sort -u )
+    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDISK=$LISTDISK"
     
     
@@ -109,7 +110,8 @@ disk_free () {
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
         tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
+            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, \
+            $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
             >> $FINALCSV
         DSKN=$(($DSKN+1))
     done    
@@ -144,8 +146,6 @@ io_rate_stats () {
         disk.dev.avg_qlen \
         disk.dev.util \
         | grep -v ':00,?,?,?,?,?,?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
         > $RAWCSV
     
     # Add headers and units to the ultimate output file
@@ -153,11 +153,11 @@ io_rate_stats () {
     echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u | wc -l)
+    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDEV=$NUMDEV"
 
     # Get list of devices from raw data
-    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | sort -u )
+    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDEV=$LISTDEV"
        
     # For every disk device
@@ -172,7 +172,8 @@ io_rate_stats () {
         AQLCOL=$(($WRBCOL+$NUMDEV))
         UTLCOL=$(($AQLCOL+$NUMDEV))
         tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
+            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
             >> $FINALCSV
         DEVN=$(($DEVN+1))
     done
@@ -182,18 +183,45 @@ io_rate_stats () {
 # This requires the network.interface stats enabled on Ubuntu.
 network_stats () {
     # Bandwidth usage
+    RAWBAND=$TMPDIR/network_bandwidth_usage_raw.csv
+    FINALBAND=$TMPDIR/final/network_bandwidth_usage.csv
     $PCMD \
         network.interface.in.bytes \
         network.interface.out.bytes \
         network.interface.total.bytes \
-        | grep -v '?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
-        > $TMPDIR/network_bandwidth_usage_raw.csv
-# Use below for final output
-#        > $TMPDIR/final/network_bandwidth_usage.csv
+        | grep -v ':00,?,?,?' \
+        > $RAWBAND
+
+    # Add headers and units to the ultimate output file
+    echo "Date,Time,Interface,in,out,total" > $FINALBAND
+    echo "none,none,none,byte / second,byte / second,byte / second,byte / second" >> $FINALBAND
+
+    # Get count of NICs from raw data
+    NUMNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    #echo "Debug: NUMNIC=$NUMNIC"
+
+    # Get list of NICs from raw data
+    LISTNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
+    #echo "Debug: LISTNIC=$LISTNIC"
+       
+    # For every NIC
+    NICN=0
+    for NIC in $LISTNIC
+    do
+        #echo "Debug: $NICN:$NIC"
+        INBCOL=$((3+$NICN))
+        OUTBCOL=$(($INBCOL+$NUMNIC))
+        TOTBCOL=$(($OUTBCOL+$NUMNIC))
+        tail -n +3 $RAWBAND \
+            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$INBCOL', $'$OUTBCOL', $'$TOTBCOL'}' \
+            >> $FINALBAND
+        NICN=$(($NICN+1))
+    done
 
     # Error stats
+    RAWERR=$TMPDIR/network_error_rates_raw.csv
+    FINALERR=$TMPDIR/final/network_error_rates.csv
     $PCMD \
         network.interface.in.packets \
         network.interface.in.errors \
@@ -204,12 +232,35 @@ network_stats () {
         network.interface.total.packets \
         network.interface.total.errors \
         network.interface.total.drops \
-        | grep -v '?' \
-        | sed 's/^Time/Date,Time/' \
-        | sed 's/^none/none,none/' \
-        > $TMPDIR/network_error_rates_raw.csv
-# Use below for final output
-#        > $TMPDIR/final/network_error_rates.csv
+        | grep -v ':00,?,?,?,?,?,?' \
+        > $RAWERR
+
+    # Add headers and units to the ultimate output file
+    echo "Date,Time,Interface,InPackets,InErrors,InDrops,OutPackets,OutErrors,OutDrops,TotalPackets,TotalErrors,TotalDrops" > $FINALERR
+    echo "none,none,none,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second" >> $FINALERR
+       
+    # For every NIC
+    NICN=0
+    for NIC in $LISTNIC
+    do
+        #echo "Debug: $NICN:$NIC"
+        INPCOL=$((3+$NICN))
+        INECOL=$(($INPCOL+$NUMNIC))
+        INDCOL=$(($INECOL+$NUMNIC))
+        OUTPCOL=$(($INDCOL+$NUMNIC))
+        OUTECOL=$(($OUTPCOL+$NUMNIC))
+        OUTDCOL=$(($OUTECOL+$NUMNIC))
+        TOTPCOL=$(($OUTDCOL+$NUMNIC))
+        TOTECOL=$(($TOTPCOL+$NUMNIC))
+        TOTDCOL=$(($TOTECOL+$NUMNIC))
+        tail -n +3 $RAWERR \
+            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$INPCOL', $'$INECOL', $'$INDCOL', \
+            $'$OUTPCOL', $'$OUTECOL', $'$OUTDCOL', \
+            $'$TOTPCOL', $'$TOTECOL', $'$TOTDCOL'}' \
+            >> $FINALERR
+        NICN=$(($NICN+1))
+    done
 }
 
 ###############################################
@@ -223,5 +274,5 @@ cd $PARCHDIR
 #load_average
 #virtual_memory
 #disk_free
-io_rate_stats
-#network_stats
+#io_rate_stats
+network_stats
