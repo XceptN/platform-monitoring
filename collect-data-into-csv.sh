@@ -40,7 +40,8 @@ multi_cpu_busy () {
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
         PRINCOL=$((3+$CPU))
-        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
+        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, \
+        (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
     done
 }
 
@@ -109,7 +110,8 @@ disk_free () {
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
         tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
+            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, \
+            $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
             >> $FINALCSV
         DSKN=$(($DSKN+1))
     done    
@@ -170,7 +172,8 @@ io_rate_stats () {
         AQLCOL=$(($WRBCOL+$NUMDEV))
         UTLCOL=$(($AQLCOL+$NUMDEV))
         tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
+            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
             >> $FINALCSV
         DEVN=$(($DEVN+1))
     done
@@ -210,7 +213,8 @@ network_stats () {
         OUTBCOL=$(($INBCOL+$NUMNIC))
         TOTBCOL=$(($OUTBCOL+$NUMNIC))
         tail -n +3 $RAWBAND \
-            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, $'$INBCOL', $'$OUTBCOL', $'$TOTBCOL'}' \
+            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, \
+            $'$INBCOL', $'$OUTBCOL', $'$TOTBCOL'}' \
             >> $FINALBAND
         NICN=$(($NICN+1))
     done
@@ -232,8 +236,8 @@ network_stats () {
         > $RAWERR
 
     # Add headers and units to the ultimate output file
-    echo "Date,Time,Interface,InPackets,InErrors,InDrops,OutPackets,OutErrors,OutDrops,TotalPackets,TotalErrors,TotalDrops"
-    echo "none,none,none,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second" 
+    echo "Date,Time,Interface,InPackets,InErrors,InDrops,OutPackets,OutErrors,OutDrops,TotalPackets,TotalErrors,TotalDrops" > $FINALERR
+    echo "none,none,none,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second,count / second" >> $FINALERR
        
     # For every NIC
     NICN=0
@@ -253,7 +257,8 @@ network_stats () {
             | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
             $'$INPCOL', $'$INECOL', $'$INDCOL', \
             $'$OUTPCOL', $'$OUTECOL', $'$OUTDCOL', \
-            $'$TOTPCOL', $'$TOTECOL', $'$TOTDCOL'}' 
+            $'$TOTPCOL', $'$TOTECOL', $'$TOTDCOL'}' \
+            >> $FINALERR
         NICN=$(($NICN+1))
     done
 }
