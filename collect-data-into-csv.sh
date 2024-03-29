@@ -1,9 +1,9 @@
 #!/bin/bash
 
 TMPDIR=/tmp/platform-monitoring-$RANDOM
-mkdir -p $TMPDIR/final
+mkdir --parents $TMPDIR/final
 
-PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut -c 28- | sed "s/\(.*\)\/.*\/.*/\1/")
+PARCHDIR=$(pcp | grep "pmlogger: primary logger: " | cut --characters=28- | sed "s/\(.*\)\/.*\/.*/\1/")
 PSTART='yesterday'
 PINTERVAL='1hour'
 PHOST=$HOSTNAME
@@ -19,7 +19,7 @@ cpu_general () {
         kernel.cpu.util.sys \
         kernel.cpu.util.wait \
         kernel.cpu.util.idle \
-        | grep -v '?' \
+        | grep --invert-match '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none,none,none,none,none/none,none,%,%,%,%/' \
         > $TMPDIR/final/cpu_general.csv
@@ -30,8 +30,8 @@ multi_cpu_busy () {
     RAWCSV=$TMPDIR/multi_cpu_raw.csv
     FINALCSV=$TMPDIR/final/multi_cpu.csv
     $PCMD kernel.percpu.cpu.idle \
-        | grep -v '?' \
-        | tail -n +3 \
+        | grep --invert-match '?' \
+        | tail --lines=+3 \
         > $RAWCSV
 
     echo "Date,Time,CPU#,Busy" > $FINALCSV
@@ -40,7 +40,7 @@ multi_cpu_busy () {
     for ((CPU=0; CPU<$NPROC; CPU++))
     do 
         PRINCOL=$((3+$CPU))
-        awk -F, '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, \
+        awk --field-separator , '{ printf "%s,%s,\x27cpu'"$CPU"'\x27,%.2f\n", $1, $2, \
         (1000-$'"$PRINCOL"')/10 }' $RAWCSV >> $FINALCSV
     done
 }
@@ -49,7 +49,7 @@ multi_cpu_busy () {
 load_average () {
     # TODO add a column comparing to $NPROC
     $PCMD kernel.all.load \
-        | grep -v '?' \
+        | grep --invert-match '?' \
         | sed 's/^Time/Date,Time/' \
         > $TMPDIR/final/loadavg.csv
 }
@@ -66,7 +66,7 @@ virtual_memory () {
         mem.util.slab \
         mem.util.swapTotal \
         mem.util.swapFree \
-        | grep -v '?' \
+        | grep --invert-match '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
         > $TMPDIR/final/memory.csv
@@ -84,7 +84,7 @@ disk_free () {
         filesys.free \
         filesys.avail \
         filesys.full \
-        | grep -v '?' \
+        | grep --invert-match '?' \
         > $RAWCSV
 
     # Add headers and units to the ultimate output file
@@ -92,11 +92,11 @@ disk_free () {
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMDISK=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDISK=$NUMDISK"
 
     # Get list of devices from raw data
-    LISTDISK=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
+    LISTDISK=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDISK=$LISTDISK"
     
     
@@ -109,8 +109,8 @@ disk_free () {
         FREECOL=$(($CAPCOL+$NUMDISK))
         AVLCOL=$(($FREECOL+$NUMDISK))
         FULLCOL=$(($AVLCOL+$NUMDISK))            
-        tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, \
+        tail --lines=+3 $RAWCSV \
+            | awk --field-separator , '{ printf "%s,%s,\x27'"$DSK"'\x27,%d,%d,%d,%.2f\n", $1, $2, \
             $'$CAPCOL', $'$FREECOL', $'$AVLCOL', $'$FULLCOL'}' \
             >> $FINALCSV
         DSKN=$(($DSKN+1))
@@ -126,7 +126,7 @@ io_rate_stats () {
         disk.all.write \
         disk.all.read_bytes \
         disk.all.write_bytes \
-        | grep -v '?' \
+        | grep --invert-match '?' \
         | sed 's/^Time/Date,Time/' \
         | sed 's/^none/none,none/' \
         > $TMPDIR/final/io_rates_overall.csv
@@ -137,7 +137,7 @@ io_rate_stats () {
 
     # Generate raw data 
     # (some devices might not haw avg_qlen and util - but we need the lines for other devices)
-    # Therefore we only grep -v with heading ?,?.... for read/write columns
+    # Therefore we only grep --invert-match with heading ?,?.... for read/write columns
     $PCMD \
         disk.dev.read \
         disk.dev.write \
@@ -145,7 +145,7 @@ io_rate_stats () {
         disk.dev.write_bytes \
         disk.dev.avg_qlen \
         disk.dev.util \
-        | grep -v ':00,?,?,?,?,?,?' \
+        | grep --invert-match ':00,?,?,?,?,?,?' \
         > $RAWCSV
     
     # Add headers and units to the ultimate output file
@@ -153,11 +153,11 @@ io_rate_stats () {
     echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMDEV=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMDEV=$NUMDEV"
 
     # Get list of devices from raw data
-    LISTDEV=$(head -1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
+    LISTDEV=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDEV=$LISTDEV"
        
     # For every disk device
@@ -171,8 +171,8 @@ io_rate_stats () {
         WRBCOL=$(($RDBCOL+$NUMDEV))
         AQLCOL=$(($WRBCOL+$NUMDEV))
         UTLCOL=$(($AQLCOL+$NUMDEV))
-        tail -n +3 $RAWCSV \
-            | awk -F, '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+        tail --lines=+3 $RAWCSV \
+            | awk --field-separator , '{ printf "%s,%s,\x27'"$DEV"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
             $'$RDCOL', $'$WRTCOL', $'$RDBCOL', $'$WRBCOL', $'$AQLCOL', $'$UTLCOL'}' \
             >> $FINALCSV
         DEVN=$(($DEVN+1))
@@ -189,7 +189,7 @@ network_stats () {
         network.interface.in.bytes \
         network.interface.out.bytes \
         network.interface.total.bytes \
-        | grep -v ':00,?,?,?' \
+        | grep --invert-match ':00,?,?,?' \
         > $RAWBAND
 
     # Add headers and units to the ultimate output file
@@ -197,11 +197,11 @@ network_stats () {
     echo "none,none,none,byte / second,byte / second,byte / second,byte / second" >> $FINALBAND
 
     # Get count of NICs from raw data
-    NUMNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMNIC=$(head --lines=1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
     #echo "Debug: NUMNIC=$NUMNIC"
 
     # Get list of NICs from raw data
-    LISTNIC=$(head -1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk -F\" '{ print $2 }' | awk '!x[$0]++' )
+    LISTNIC=$(head --lines=1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTNIC=$LISTNIC"
        
     # For every NIC
@@ -212,8 +212,8 @@ network_stats () {
         INBCOL=$((3+$NICN))
         OUTBCOL=$(($INBCOL+$NUMNIC))
         TOTBCOL=$(($OUTBCOL+$NUMNIC))
-        tail -n +3 $RAWBAND \
-            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, \
+        tail --lines=+3 $RAWBAND \
+            | awk --field-separator , '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f\n", $1, $2, \
             $'$INBCOL', $'$OUTBCOL', $'$TOTBCOL'}' \
             >> $FINALBAND
         NICN=$(($NICN+1))
@@ -232,7 +232,7 @@ network_stats () {
         network.interface.total.packets \
         network.interface.total.errors \
         network.interface.total.drops \
-        | grep -v ':00,?,?,?,?,?,?' \
+        | grep --invert-match ':00,?,?,?,?,?,?' \
         > $RAWERR
 
     # Add headers and units to the ultimate output file
@@ -253,8 +253,8 @@ network_stats () {
         TOTPCOL=$(($OUTDCOL+$NUMNIC))
         TOTECOL=$(($TOTPCOL+$NUMNIC))
         TOTDCOL=$(($TOTECOL+$NUMNIC))
-        tail -n +3 $RAWERR \
-            | awk -F, '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
+        tail --lines=+3 $RAWERR \
+            | awk --field-separator , '{ printf "%s,%s,\x27'"$NIC"'\x27,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", $1, $2, \
             $'$INPCOL', $'$INECOL', $'$INDCOL', \
             $'$OUTPCOL', $'$OUTECOL', $'$OUTDCOL', \
             $'$TOTPCOL', $'$TOTECOL', $'$TOTDCOL'}' \
