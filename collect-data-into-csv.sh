@@ -14,6 +14,7 @@ NPROC=$(nproc)
 
 # General CPU usage
 cpu_general () {
+    echo "Collecting general CPU usage data..."
     $PCMD \
         kernel.cpu.util.user \
         kernel.cpu.util.sys \
@@ -27,6 +28,7 @@ cpu_general () {
 
 # Multi-CPU busy rates
 multi_cpu_busy () {
+    echo "Collecting and processing multi-core/thread CPU usage data..."
     RAWCSV=$TMPDIR/multi_cpu_raw.csv
     FINALCSV=$TMPDIR/final/multi_cpu.csv
     $PCMD kernel.percpu.cpu.idle \
@@ -47,6 +49,7 @@ multi_cpu_busy () {
 
 # Load averages
 load_average () {
+    echo "Collecting load average (loadavg) data..."
     # TODO add a column comparing to $NPROC
     $PCMD kernel.all.load \
         | grep --invert-match '?' \
@@ -56,6 +59,7 @@ load_average () {
 
 # Virtual memory stats
 virtual_memory () {
+    echo "Collecting virtual memory statistics..."
     $PCMD \
         mem.physmem \
         mem.util.free \
@@ -76,8 +80,10 @@ virtual_memory () {
 # Disk Free 
 disk_free () {
     RAWCSV=$TMPDIR/diskfree_raw.csv
-    FINALCSV=$TMPDIR/final/diskfree.csv
-    
+    FINALCSV=$TMPDIR/final/diskfree.csv    
+
+    echo "Collecting and processing storage/disk usage data..."
+
     # Generate raw data
     $PCMD \
         filesys.capacity \
@@ -92,13 +98,12 @@ disk_free () {
     echo "none,none,none,Kbyte,Kbyte,Kbyte,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDISK=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMDISK=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc --lines)
     #echo "Debug: NUMDISK=$NUMDISK"
 
     # Get list of devices from raw data
     LISTDISK=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "filesys.capacity" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' )
     #echo "Debug: LISTDISK=$LISTDISK"
-    
     
     # For every disk
     DSKN=0
@@ -120,7 +125,9 @@ disk_free () {
 
 # I/O Rate stats
 io_rate_stats () {
+    echo "Collecting an processing I/O rate statistics..."
     # Overall I/O rates
+    echo "> Overall read/write statistics..."
     $PCMD \
         disk.all.read \
         disk.all.write \
@@ -132,6 +139,7 @@ io_rate_stats () {
         > $TMPDIR/final/io_rates_overall.csv
 
     # Per-device I/O rates
+    echo "> Per-device I/O rates..."
     RAWCSV=$TMPDIR/io_rates_perdevice_raw.csv
     FINALCSV=$TMPDIR/final/io_rates_perdevice.csv
 
@@ -153,7 +161,7 @@ io_rate_stats () {
     echo "none,none,none,count / second,count / second,Kbyte / second,Kbyte / second,none,%" >> $FINALCSV
 
     # Get count of devices from raw data
-    NUMDEV=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMDEV=$(head --lines=1 $RAWCSV | sed 's/\,/\n/g' | grep "disk.dev.read" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc --lines)
     #echo "Debug: NUMDEV=$NUMDEV"
 
     # Get list of devices from raw data
@@ -182,7 +190,9 @@ io_rate_stats () {
 # Network stats
 # This requires the network.interface stats enabled on Ubuntu.
 network_stats () {
+    echo "Collecting an processing networking statistics..."
     # Bandwidth usage
+    echo "> Per-interface bandwidth usage..."
     RAWBAND=$TMPDIR/network_bandwidth_usage_raw.csv
     FINALBAND=$TMPDIR/final/network_bandwidth_usage.csv
     $PCMD \
@@ -197,7 +207,7 @@ network_stats () {
     echo "none,none,none,byte / second,byte / second,byte / second,byte / second" >> $FINALBAND
 
     # Get count of NICs from raw data
-    NUMNIC=$(head --lines=1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc -l)
+    NUMNIC=$(head --lines=1 $RAWBAND | sed 's/\,/\n/g' | grep "network.interface.in.bytes" | awk --field-separator \" '{ print $2 }' | awk '!x[$0]++' | wc --lines)
     #echo "Debug: NUMNIC=$NUMNIC"
 
     # Get list of NICs from raw data
@@ -220,6 +230,7 @@ network_stats () {
     done
 
     # Error stats
+    echo "> Per-interface error/drop stats..."
     RAWERR=$TMPDIR/network_error_rates_raw.csv
     FINALERR=$TMPDIR/final/network_error_rates.csv
     $PCMD \
@@ -266,13 +277,15 @@ network_stats () {
 ###############################################
 # Main
 ###############################################
+
+# Need to go to archive directory for pmdumptext work properly
 cd $PARCHDIR
 
 # Call modules
-#cpu_general
-#multi_cpu_busy
-#load_average
-#virtual_memory
-#disk_free
-#io_rate_stats
+cpu_general
+multi_cpu_busy
+load_average
+virtual_memory
+disk_free
+io_rate_stats
 network_stats
