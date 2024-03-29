@@ -90,7 +90,7 @@ disk_free () {
         filesys.free \
         filesys.avail \
         filesys.full \
-        | grep --invert-match '?' \
+        | grep --invert-match ':00,?,?,?,?,?,?' \
         > $RAWCSV
 
     # Add headers and units to the ultimate output file
@@ -282,10 +282,10 @@ network_stats () {
 cd $PARCHDIR
 
 # Call modules
-cpu_general
-multi_cpu_busy
-load_average
-virtual_memory
+#cpu_general
+#multi_cpu_busy
+#load_average
+#virtual_memory
 disk_free
-io_rate_stats
-network_stats
+#io_rate_stats
+#network_stats
