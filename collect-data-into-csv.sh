@@ -47,14 +47,28 @@ multi_cpu_busy () {
     done
 }
 
-# Load averages
+# Load averages / CPUsat
 load_average () {
-    echo "Collecting load average (loadavg) data..."
-    # TODO add a column comparing to $NPROC
+    echo "Collecting and processing load average (loadavg) data..."
+
+    # Collect load averages
     $PCMD kernel.all.load \
         | grep --invert-match '?' \
         | sed 's/^Time/Date,Time/' \
+        | sed 's/^none/none,none/' \
         > $TMPDIR/final/loadavg.csv
+    
+    
+    # Generate CPU saturation metrics
+    echo "Date,Time,CPUSat1min,CPUSat5min,CPUSat15min" > $TMPDIR/final/CPUSat.csv
+    echo "none,none,%,%,%" >> $TMPDIR/final/CPUSat.csv
+    tail --lines=+3 $TMPDIR/final/loadavg.csv | \
+        awk --field-separator , '{ printf "%s,%s,%.2f,%.2f,%.2f\n", \
+                                $1, $2, \
+                                100*$3/'"$NPROC"', \
+                                100*$4/'"$NPROC"', \
+                                100*$5/'"$NPROC"' }' \
+                                >> $TMPDIR/final/CPUSat.csv
 }
 
 # Virtual memory stats
@@ -284,8 +298,8 @@ cd $PARCHDIR
 # Call modules
 #cpu_general
 #multi_cpu_busy
-#load_average
+load_average
 #virtual_memory
-disk_free
+#disk_free
 #io_rate_stats
 #network_stats
